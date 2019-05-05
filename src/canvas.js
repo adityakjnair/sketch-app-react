@@ -12,7 +12,7 @@ class Canvas extends Component {
         this.pusher = new Pusher('8bfa62afc4715b6ebbf3', {
             cluster: 'us3',
             forceTLS: true
-          });
+        });
     }
 
     isPainting = false;
@@ -69,14 +69,14 @@ class Canvas extends Component {
     async sendPaintData() {
         const body = {
             line: this.line,
-            userId: this.userId,
+            userId: this.userId
         };
         // We use the native fetch API to make requests to the server
         const req = await fetch('http://localhost:4000/paint', {
             method: 'post',
             body: JSON.stringify(body),
             headers: {
-                'content-type': 'application/json',
+                'content-type': 'application/json'
             }
         });
         const res = await req.json();
@@ -94,7 +94,7 @@ class Canvas extends Component {
         const channel = this.pusher.subscribe('painting');
         channel.bind('draw', (data) => {
             const { userId, line } = data;
-            console.log('User '+userId+' drew.')
+            console.log('User ' + userId + ' drew.')
             if (userId !== this.userId) {
                 line.forEach((position) => {
                     this.paint(position.start, position.stop, this.guestStrokeStyle);
