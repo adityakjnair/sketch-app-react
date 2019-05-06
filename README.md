@@ -1,4 +1,7 @@
-##Real-time Collaborative Sketching Application
+Code to Sketch
+======
+SDCL Project
+Real-time Collaborative Sketching Application
 
 This is a sketching tool which supports collaborative work.
 It uses ReactJS for the front-end and NodeJS for backend.
