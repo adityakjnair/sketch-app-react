@@ -51,7 +51,6 @@ class Canvas extends Component {
         }
     }
     paint(prevPos, currPos, strokeStyle) {
-        debugger;
         const { offsetX, offsetY } = currPos;
         const { offsetX: x, offsetY: y } = prevPos;
 
@@ -79,6 +78,7 @@ class Canvas extends Component {
                 'content-type': 'application/json'
             }
         });
+        // eslint-disable-next-line no-unused-vars
         const res = await req.json();
         this.line = [];
     }

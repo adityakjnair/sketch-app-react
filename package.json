@@ -2,6 +2,7 @@
   "name": "sketch-app-react",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://adityakjnair.github.io/sketch-app-react/",
   "dependencies": {
     "body-parser": "^1.19.0",
     "dotenv": "^7.0.0",
@@ -11,8 +12,7 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.0",
-    "uuid": "^3.3.2",
-    "homepage": "https://adityakjnair.github.io/sketch-app-react/"
+    "uuid": "^3.3.2"
   },
   "scripts": {
     "start": "react-scripts start",
