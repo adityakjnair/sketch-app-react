@@ -48,6 +48,10 @@ class Canvas extends Component {
         if (this.isPainting) {
             this.isPainting = false;
             this.sendPaintData();
+            // this.ctx.font = '30px Comic Sans MS';
+            // this.ctx.fillStyle = 'red';
+            // // this.ctx.fillStyle = "rgba(255,0,0,0)";
+            // this.ctx.fillText("Test", this.canvas.width/2, this.canvas.height/2);
         }
     }
     paint(prevPos, currPos, strokeStyle) {
@@ -71,7 +75,7 @@ class Canvas extends Component {
             userId: this.userId
         };
         // We use the native fetch API to make requests to the server
-        const req = await fetch('http://localhost:4000/paint', {
+        const req = await fetch('http://sketch-express-env.t3npyev7mz.us-west-1.elasticbeanstalk.com/paint', {
             method: 'post',
             body: JSON.stringify(body),
             headers: {
@@ -94,7 +98,6 @@ class Canvas extends Component {
         const channel = this.pusher.subscribe('painting');
         channel.bind('draw', (data) => {
             const { userId, line } = data;
-            console.log('User ' + userId + ' drew.')
             if (userId !== this.userId) {
                 line.forEach((position) => {
                     this.paint(position.start, position.stop, this.guestStrokeStyle);
