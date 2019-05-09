@@ -75,7 +75,7 @@ class Canvas extends Component {
             userId: this.userId
         };
         // We use the native fetch API to make requests to the server
-        const req = await fetch('http://sketch-express-env.t3npyev7mz.us-west-1.elasticbeanstalk.com/paint', {
+        const req = await fetch('localhost:4000/paint', {
             method: 'post',
             body: JSON.stringify(body),
             headers: {
