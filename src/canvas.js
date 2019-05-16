@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { v4 } from 'uuid';
 import Pusher from 'pusher-js';
+import FileList from './FileList'
 
 class Canvas extends Component {
     constructor(props) {
@@ -8,6 +9,7 @@ class Canvas extends Component {
         this.onMouseDown = this.onMouseDown.bind(this);
         this.onMouseMove = this.onMouseMove.bind(this);
         this.endPaintEvent = this.endPaintEvent.bind(this);
+        this.onFileDrop = this.onFileDrop.bind(this);
         Pusher.logToConsole = true;
         this.pusher = new Pusher('8bfa62afc4715b6ebbf3', {
             cluster: 'us3',
@@ -47,11 +49,7 @@ class Canvas extends Component {
     endPaintEvent() {
         if (this.isPainting) {
             this.isPainting = false;
-            this.sendPaintData();
-            // this.ctx.font = '30px Comic Sans MS';
-            // this.ctx.fillStyle = 'red';
-            // // this.ctx.fillStyle = "rgba(255,0,0,0)";
-            // this.ctx.fillText("Test", this.canvas.width/2, this.canvas.height/2);
+            this.sendPaintData(0);
         }
     }
     paint(prevPos, currPos, strokeStyle) {
@@ -69,13 +67,24 @@ class Canvas extends Component {
         this.prevPos = { offsetX, offsetY };
     }
 
-    async sendPaintData() {
-        const body = {
-            line: this.line,
-            userId: this.userId
-        };
+    async sendPaintData(origin) {
+        var body = {};
+        if (origin === 0) {
+            body = {
+                line: this.line,
+                userId: this.userId,
+                origin: origin
+            }
+        } else {
+            body = {
+                userId: this.userId,
+                origin: origin
+            }
+
+        }
+
         // We use the native fetch API to make requests to the server
-        const req = await fetch('localhost:4000/paint', {
+        const req = await fetch('http://localhost:4000/paint', {
             method: 'post',
             body: JSON.stringify(body),
             headers: {
@@ -85,6 +94,22 @@ class Canvas extends Component {
         // eslint-disable-next-line no-unused-vars
         const res = await req.json();
         this.line = [];
+    }
+
+    onFileDrop(files) {
+        const reader = new FileReader()
+        reader.onabort = () => console.log('file reading was aborted')
+        reader.onerror = () => console.log('file reading has failed')
+        reader.onloadend = () => {
+            // Do whatever you want with the file contents
+            const binaryStr = reader.result
+            console.log(binaryStr)
+            this.ctx.font = '20px Comic Sans MS';
+            this.ctx.fillStyle = 'white';
+            binaryStr.split('\n').map((text, i) => this.ctx.fillText(text, this.canvas.width / 2, (this.canvas.height / 2) + (i + 1) * 30));
+            this.sendPaintData(binaryStr.split('\n'));
+        }
+        Array.from(files).forEach(file => reader.readAsText(file))
     }
 
     componentDidMount() {
@@ -97,26 +122,37 @@ class Canvas extends Component {
         this.ctx.lineWidth = 5;
         const channel = this.pusher.subscribe('painting');
         channel.bind('draw', (data) => {
+            if(data.origin.length){
+                if (data.userId !== this.userId) {
+                    this.ctx.font = '20px Comic Sans MS';
+                    this.ctx.fillStyle = 'red';
+                    data.origin.map((text, i) => this.ctx.fillText(text, this.canvas.width / 2, (this.canvas.height / 2) + (i + 1) * 30));
+                }
+            }else {
             const { userId, line } = data;
             if (userId !== this.userId) {
                 line.forEach((position) => {
                     this.paint(position.start, position.stop, this.guestStrokeStyle);
                 });
             }
+        }
         });
     }
 
     render() {
         return (
-            <canvas
-                // We use the ref attribute to get direct access to the canvas element. 
-                ref={(ref) => (this.canvas = ref)}
-                style={{ background: 'black' }}
-                onMouseDown={this.onMouseDown}
-                onMouseLeave={this.endPaintEvent}
-                onMouseUp={this.endPaintEvent}
-                onMouseMove={this.onMouseMove}
-            />
+            <div>
+                <canvas
+                    // We use the ref attribute to get direct access to the canvas element. 
+                    ref={(ref) => (this.canvas = ref)}
+                    style={{ background: 'black' }}
+                    onMouseDown={this.onMouseDown}
+                    onMouseLeave={this.endPaintEvent}
+                    onMouseUp={this.endPaintEvent}
+                    onMouseMove={this.onMouseMove}
+                />
+                <FileList onFileDrop={this.onFileDrop} />
+            </div>
         );
     }
 }

@@ -12,18 +12,10 @@ class FileList extends Component {
             if (!files[i].name) return
             fileList.push(files[i].name)
         }
+        this.props.onFileDrop(files)
         this.setState({ files: fileList })
-
-        // const reader = new FileReader()
-        // reader.onabort = () => console.log('file reading was aborted')
-        // reader.onerror = () => console.log('file reading has failed')
-        // reader.onload = () => {
-        //   // Do whatever you want with the file contents
-        //   const binaryStr = reader.result
-        //   console.log(binaryStr)
-        // }
-        // files.forEach(file => reader.readAsBinaryString(file))
     }
+
     render() {
         return (
             <Filedrop handleDrop={this.handleDrop}>

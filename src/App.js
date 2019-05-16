@@ -1,7 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import './styles/App.css';
 import Canvas from './canvas';
-import FileList from './FileList';
 
 class App extends Component {
   render() {
@@ -14,7 +13,6 @@ class App extends Component {
             <div className="user guest">Guest</div>
           </div>
           <Canvas />
-          <FileList />
         </div>
       </Fragment>
     );
